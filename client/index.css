@@ -1,0 +1,16 @@
+#squares{
+    display: flex;
+    width: 300px;
+    height: 300px;
+    background-color: rgb(100, 100, 100);
+    flex-wrap: wrap;
+    color:rgb(0, 0, 0)
+}
+.sq{
+    width:100px;
+    border-width: 5px;
+    border-color: black;
+    border-radius: 10px;
+    margin: 10px black;
+    height: 100px;
+}
