@@ -1,79 +1,86 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tic Tac Toe</title>
-        <link rel="stylesheet" href="index.css">
-    </head>
-    <body>
-        <h1>TIC_TAC_TOE</h1>
-        <br/>
-        <div id="player"></div>
-        <div id="opp"></div>
-        <div id="turn"></div>
-        <div>
-            <p id="name">Enter Your Name</p>
-            <input placeholder="name" type="text" id="namebox"/>
-            <br>
-            <button id="search">Search for Player</button><button id="computer">AI Mode</button>
-        </div>
-        <div id="squares">
-            <button id="sq1" class="sq"></button>
-            <button id="sq2" class="sq"></button>
-            <button id="sq3" class="sq"></button>
-            <button id="sq4" class="sq"></button>
-            <button id="sq5" class="sq"></button>
-            <button id="sq6" class="sq"></button>
-            <button id="sq7" class="sq"></button>
-            <button id="sq8" class="sq"></button>
-            <button id="sq9" class="sq"></button>    
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <h1>TIC_TAC_TOE</h1>
+    <br/>
+    <div id="player"></div>
+    <div id="opp"></div>
+    <div id="turn"></div>
+    <div>
+        <p id="name">Enter Your Name</p>
+        <input placeholder="name" type="text" id="namebox"/>
+        <br>
+        <button id="search">Search for Player</button><button id="computer">AI Mode</button>
+    </div>
+    <div id="squares">
+        <!-- Tic Tac Toe board buttons -->
+        <button id="sq1" class="sq"></button>
+        <button id="sq2" class="sq"></button>
+        <button id="sq3" class="sq"></button>
+        <button id="sq4" class="sq"></button>
+        <button id="sq5" class="sq"></button>
+        <button id="sq6" class="sq"></button>
+        <button id="sq7" class="sq"></button>
+        <button id="sq8" class="sq"></button>
+        <button id="sq9" class="sq"></button>    
+    </div>
 
-        <!-- Include the Socket.IO client script -->
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            resetBoard()
-            document.getElementById("squares").style.visibility = "hidden";
-            document.getElementById("turn").style.visibility = "hidden";
-            document.getElementById("player").style.visibility = "hidden";
-            document.getElementById("opp").style.visibility = "hidden";
+    <!-- socket.io script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // start the board
+        resetboard();
+        
+        // hide game elements initially
+        document.getElementById("squares").style.visibility = "hidden";
+        document.getElementById("turn").style.visibility = "hidden";
+        document.getElementById("player").style.visibility = "hidden";
+        document.getElementById("opp").style.visibility = "hidden";
 
-            const socket = io();
+        // create a connection to the server
+        const socket = io();
 
-            let name;
-            document.getElementById("search").addEventListener("click", function() {
-                name = document.getElementById("namebox").value;
-                if (name == null || name == "") {
-                    alert("Enter a Name");
-                } else {
-                    socket.emit("search", { name: name });
-                    document.getElementById("search").disabled = true;
-                }
-                socket.on("find", (e) => {
+        let name;  // variable for name
 
-                let allplayerarr = e.allplayers;
+        // searching a player
+        document.getElementById("search").addEventListener("click", function() {
+            name = document.getElementById("namebox").value;  // get the player's name from box
+            if (name == null || name == "") {
+                alert("Enter a Name");  // Alert if the name is null
+            } else {
+                socket.emit("search", { name: name });  // Emit a search event to the server with the player name
+                document.getElementById("search").disabled = true;  // Disable the search button
+            }
 
-                document.getElementById("turn").style.visibility = "visible"
-                document.getElementById("squares").style.visibility = "visible"
-                document.getElementById("player").style.visibility = "visible"
-                document.getElementById("opp").style.visibility = "visible"
-                document.getElementById("name").style.visibility = "hidden"
-                document.getElementById("namebox").style.visibility = "hidden"
-                document.getElementById("search").style.visibility = "hidden"
+            //  find event from the server
+            socket.on("find", (e) => {
+                let allplayerarr = e.allplayers;  // Array of all players
 
-                let oppname;
-                let value;
-                let playername;
-                let oppvalue;
+                // display of all game boxes etc.
+                document.getElementById("turn").style.visibility = "visible";
+                document.getElementById("squares").style.visibility = "visible";
+                document.getElementById("player").style.visibility = "visible";
+                document.getElementById("opp").style.visibility = "visible";
+                document.getElementById("name").style.visibility = "hidden";
+                document.getElementById("computer").style.visibility = 'hidden';
+                document.getElementById("namebox").style.visibility = "hidden";
+                document.getElementById("search").style.visibility = "hidden";
 
+                let oppname, value, playername, oppvalue;  // storing the details of players
+
+                // pair with opponent
                 const foundobj = allplayerarr.find(obj => obj.p1.p1name === name || obj.p2.p2name === name);
                 if (foundobj.p1.p1name === name) {
                     oppname = foundobj.p2.p2name;
                     value = foundobj.p2.p2value;
                     playername = foundobj.p1.p1name;
                     oppvalue = foundobj.p1.p1value;
-
                 } else {
                     playername = foundobj.p2.p2name;
                     oppname = foundobj.p1.p1name;
@@ -81,133 +88,143 @@
                     oppvalue = foundobj.p2.p2value;
                 }
 
+                // for changing the interface acc to opponent by name and trun after each move
                 document.getElementById("opp").innerText = `oppo : ${oppname} (${value}) `;
                 document.getElementById("turn").innerText =  `X's turn`;
-                document.getElementById("player").innerText=`player :${playername}(${oppvalue})`
-            })
+                document.getElementById("player").innerText=`player :${playername}(${oppvalue})`;
+            });
 
-            document.querySelectorAll(".sq").forEach(e=>{
-                e.addEventListener("click",function(){
-                    let value=document.getElementById("turn").innerText.startsWith("X")?"X":"O";
-                    e.innerText=value
-                    e.disabled=true
-                    socket.emit("playing",{value:value,id:e.id})
-                })
-            })
-            socket.on("playing",(e)=>{
+            // click event listeners to each square
+            document.querySelectorAll(".sq").forEach(e => {
+                e.addEventListener("click", function() {
+                    let value = document.getElementById("turn").innerText.startsWith("X") ? "X" : "O";  // Determine the current player
+                    e.innerText = value;  // add the square with the players value
+                    e.disabled = true;  // Disable the square
+                    socket.emit("playing", { value: value, id: e.id });  // Emit the playing event to the server
+                });
+            });
+
+            //  'playing' event from the server
+            socket.on("playing", (e) => {
                 const foundobj = (e.allplayers).find(obj => obj.p1.p1name === name || obj.p2.p2name === name);
-                e.disabled=true
-                p1id=foundobj.p1.p1move
-                p2id=foundobj.p2.p2move 
+                e.disabled = true;
+                p1id = foundobj.p1.p1move;
+                p2id = foundobj.p2.p2move;
 
-                if((foundobj.sum)%2==0){
-                    document.getElementById("turn").innerText="O's turn"
-                }
-                else{
-                    document.getElementById("turn").innerText="X's turn"
-                }
-                if(p1id!==""){
-                    document.getElementById(`${p1id}`).innerText="X"
-                    document.getElementById(`${p1id}`).disabled=true
-                    document.getElementById(`${p1id}`).style.color="black"
-                }
-                if(p2id!==""){
-                    document.getElementById(`${p2id}`).innerText="O"
-                    document.getElementById(`${p2id}`).disabled=true
-                    document.getElementById(`${p2id}`).style.color="black"
-                }
-                check(name,foundobj.sum)
-            })
-            });
-
-
-            document.getElementById("computer").addEventListener("click", function() {
-                document.getElementById("name").style.visibility = "hidden";
-                document.getElementById("namebox").style.visibility = "hidden";
-                document.getElementById("search").style.visibility = "hidden";
-                document.getElementById("turn").style.visibility = "visible";
-                document.getElementById("squares").style.visibility = "visible";
-                const board = Array(9).fill('_');
-                const cells = document.querySelectorAll('.sq');
-                let aisum=1;
-                name = document.getElementById("namebox").value;
-                if (name == null || name == "") {
-                    alert("Enter a Name");
+                // Update the turn indicator
+                if ((foundobj.sum) % 2 == 0) {
+                    document.getElementById("turn").innerText = "O's turn";
                 } else {
-                    socket.emit("search", { name: name });
-                    document.getElementById("computer").disabled = true;
+                    document.getElementById("turn").innerText = "X's turn";
                 }
-                socket.on('moveMade', (index) => {
-                    setTimeout(()=>{ 
-                        if(index !== null) {
-                            document.getElementById(`sq${index+1}`).innerText = "O";  // Fix index offset
-                            document.getElementById(`sq${index+1}`).disabled = true;  // Fix index offset
-                            board[index] = 'O'
-                            aisum++;
-                            check(name, aisum); // Call check function to determine game status
-                        }
-                    },300)
-                    
-                });
-            
 
-                document.querySelectorAll(".sq").forEach((cell, index) => {
-                    cell.addEventListener("click", function() {
-                        if (board[index] === '_') {
-                            cell.innerText = "X";
-                            cell.disabled = true;
-                            board[index] = 'X';
-                            aisum++;
-                            check(name, aisum);  // Call check function to determine game status
-                            socket.emit("makeMove", board);
-                        }
-                    });
-                });
+                // Update the squares with the players turn
+                if (p1id !== "") {
+                    document.getElementById(`${p1id}`).innerText = "X";
+                    document.getElementById(`${p1id}`).disabled = true;
+                    document.getElementById(`${p1id}`).style.color = "black";
+                }
+                if (p2id !== "") {
+                    document.getElementById(`${p2id}`).innerText = "O";
+                    document.getElementById(`${p2id}`).disabled = true;
+                    document.getElementById(`${p2id}`).style.color = "black";
+                }
+                check(name, foundobj.sum);  // cheking the winner after each move
             });
+        });
 
-            function check(name, sum){
-                let b1 = document.getElementById("sq1").innerText || 'a';
-                let b2 = document.getElementById("sq2").innerText || 'b';
-                let b3 = document.getElementById("sq3").innerText || 'c';
-                let b4 = document.getElementById("sq4").innerText || 'd';
-                let b5 = document.getElementById("sq5").innerText || 'e';
-                let b6 = document.getElementById("sq6").innerText || 'f';
-                let b7 = document.getElementById("sq7").innerText || 'g';
-                let b8 = document.getElementById("sq8").innerText || 'h';
-                let b9 = document.getElementById("sq9").innerText || 'i';
-
-                if ((b1 === b2 && b2 === b3 && b1 !== "") || // Row 1
-                    (b4 === b5 && b5 === b6 && b4 !== "") || // Row 2
-                    (b7 === b8 && b8 === b9 && b7 !== "") || // Row 3
-                    (b1 === b4 && b4 === b7 && b1 !== "") || // Column 1
-                    (b2 === b5 && b5 === b8 && b2 !== "") || // Column 2
-                    (b3 === b6 && b6 === b9 && b3 !== "") || // Column 3
-                    (b1 === b5 && b5 === b9 && b1 !== "") || // Diagonal 1
-                    (b3 === b5 && b5 === b7 && b3 !== "")) { // Diagonal 2
-                        socket.emit("Game Over", { name: name });
-                        setTimeout(() => {
-                            sum % 2 == 0 ? alert("X Won") : alert("O Won");
-                            setTimeout(() => {
-                                location.reload();
-                                resetBoard();
-                            }, 100);
-                        }, 100);
-                } else if (sum == 10) {  // Correct sum value to 9 for Draw
-                    socket.emit("Game Over", { name: name });
-                    setTimeout(() => {
-                        alert("Draw!!");
-                        location.reload();
-                        resetBoard();
-                    }, 100);
-                }
+        // AI MODE
+        document.getElementById("computer").addEventListener("click", function() {
+            document.getElementById("name").style.visibility = "hidden";
+            document.getElementById("namebox").style.visibility = "hidden";
+            document.getElementById("search").style.visibility = "hidden";
+            document.getElementById("computer").style.visibility = 'hidden';
+            document.getElementById("turn").style.visibility = "visible";
+            document.getElementById("squares").style.visibility = "visible";
+            const board = Array(9).fill('_');  // start the board array
+            let aisum = 1;  // start move counter for AI
+            name = document.getElementById("namebox").value;
+            if (name == null || name == "") {
+                alert("Enter a Name");  // Alert if the name is null
+            } else {
+                socket.emit("search", { name: name });  // Emit a search event to the server with the player name
             }
 
-            function resetBoard() {
-                document.querySelectorAll(".sq").forEach(e => {
-                    e.innerText = "";
-                    e.disabled = false;
+            // Listen for the 'moveMade' event from the server
+            socket.on('moveMade', (index) => {
+                setTimeout(() => { 
+                    if (index !== null) {
+                        document.getElementById(`sq${index + 1}`).innerText = "O";  // Update the square with AI move
+                        document.getElementById(`sq${index + 1}`).disabled = true;  // Disable the square
+                        board[index] = 'O';
+                        aisum++;
+                        check(name, aisum);  // Check the game status
+                    }
+                }, 300);
+            });
+
+            // Add click event listeners to each square for player moves
+            document.querySelectorAll(".sq").forEach((cell, index) => {
+                cell.addEventListener("click", function() {
+                    if (board[index] === '_') {
+                        cell.innerText = "X";
+                        cell.disabled = true;
+                        board[index] = 'X';
+                        aisum++;
+                        check(name, aisum);  // Check the winner
+                        socket.emit("makeMove", board);  // Emit the makeMove event
+                    }
                 });
-            };
-        </script>
-    </body>
-    </html>
+            });
+        });
+
+        // Function to check winner
+        function check(name, sum) {
+            // Get the values of each square
+            let b1 = document.getElementById("sq1").innerText || 'a';
+            let b2 = document.getElementById("sq2").innerText || 'b';
+            let b3 = document.getElementById("sq3").innerText || 'c';
+            let b4 = document.getElementById("sq4").innerText || 'd';
+            let b5 = document.getElementById("sq5").innerText || 'e';
+            let b6 = document.getElementById("sq6").innerText || 'f';
+            let b7 = document.getElementById("sq7").innerText || 'g';
+            let b8 = document.getElementById("sq8").innerText || 'h';
+            let b9 = document.getElementById("sq9").innerText || 'i';
+
+            // Check for winning conditions
+            if ((b1 === b2 && b2 === b3 && b1 !== "") ||  // Row 1
+                (b4 === b5 && b5 === b6 && b4 !== "") ||  // Row 2
+                (b7 === b8 && b8 === b9 && b7 !== "") ||  // Row 3
+                (b1 === b4 && b4 === b7 && b1 !== "") ||  // Column 1
+                (b2 === b5 && b5 === b8 && b2 !== "") ||  // Column 2
+                (b3 === b6 && b6 === b9 && b3 !== "") ||  // Column 3
+                (b1 === b5 && b5 === b9 && b1 !== "") ||  // Diagonal 1
+                (b3 === b5 && b5 === b7 && b3 !== "")) {  // Diagonal 2
+                    socket.emit("Game Over", { name: name });  // Emit the Game Over event
+                    setTimeout(() => {
+                        sum % 2 == 0 ? alert("X Won") : alert("O Won");  // Alert the winner
+                        setTimeout(() => {
+                            location.reload();  // Reload the page
+                            resetboard();  // Reset the board
+                        }, 100);
+                    }, 100);
+            } else if (sum == 10) {  // Check for draw condition
+                socket.emit("Game Over", { name: name });  // Emit the Game Over event
+                setTimeout(() => {
+                    alert("Draw!!");  // Alert for draw
+                    location.reload();  // Reload the page
+                    resetboard();  // Reset the board
+                }, 100);
+            }
+        }
+
+        // Function to reset the board
+        function resetboard() {
+            document.querySelectorAll(".sq").forEach(e => {
+                e.innerText = "";  // Clear the text of each square
+                e.disabled = false;  // Enable each square
+            });
+        }
+    </script>
+</body>
+</html>
