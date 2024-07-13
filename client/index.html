@@ -135,6 +135,11 @@
 
         // AI MODE
         document.getElementById("computer").addEventListener("click", function() {
+            name = document.getElementById("namebox").value;
+            if (name == null || name == "") {
+                alert("Enter a Name");  // Alert if the name is null
+            } else {
+
             document.getElementById("name").style.visibility = "hidden";
             document.getElementById("namebox").style.visibility = "hidden";
             document.getElementById("search").style.visibility = "hidden";
@@ -143,12 +148,6 @@
             document.getElementById("squares").style.visibility = "visible";
             const board = Array(9).fill('_');  // start the board array
             let aisum = 1;  // start move counter for AI
-            name = document.getElementById("namebox").value;
-            if (name == null || name == "") {
-                alert("Enter a Name");  // Alert if the name is null
-            } else {
-                socket.emit("search", { name: name });  // Emit a search event to the server with the player name
-            }
 
             // Listen for the 'moveMade' event from the server
             socket.on('moveMade', (index) => {
@@ -176,7 +175,9 @@
                     }
                 });
             });
+        }
         });
+
 
         // Function to check winner
         function check(name, sum) {
