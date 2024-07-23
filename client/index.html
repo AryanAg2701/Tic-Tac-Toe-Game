@@ -62,7 +62,7 @@
             socket.on("find", (e) => {
                 let allplayerarr = e.allplayers;  // Array of all players
 
-                // display of all game boxes etc.
+                // display of all game   boxes etc.
                 document.getElementById("turn").style.visibility = "visible";
                 document.getElementById("squares").style.visibility = "visible";
                 document.getElementById("player").style.visibility = "visible";
@@ -89,9 +89,9 @@
                 }
 
                 // for changing the interface acc to opponent by name and trun after each move
-                document.getElementById("opp").innerText = `oppo : ${oppname} (${value}) `;
+                document.getElementById("opp").innerText = `Oppo : ${oppname} (${value}) `;
                 document.getElementById("turn").innerText =  `X's turn`;
-                document.getElementById("player").innerText=`player :${playername}(${oppvalue})`;
+                document.getElementById("player").innerText=`Player :${playername}(${oppvalue})`;
             });
 
             // click event listeners to each square
@@ -108,8 +108,8 @@
             socket.on("playing", (e) => {
                 const foundobj = (e.allplayers).find(obj => obj.p1.p1name === name || obj.p2.p2name === name);
                 e.disabled = true;
-                p1id = foundobj.p1.p1move;
-                p2id = foundobj.p2.p2move;
+                let p1id = foundobj.p1.p1move;
+                let p2id = foundobj.p2.p2move;
 
                 // Update the turn indicator
                 if ((foundobj.sum) % 2 == 0) {

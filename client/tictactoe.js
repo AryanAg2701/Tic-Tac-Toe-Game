@@ -26,13 +26,11 @@ io.on("connection", (socket) => {
                     p1name: arr[0],
                     p1value: "X",
                     p1move: "",
-                    p1id: "",
                 };
                 let pobj2 = {
                     p2name: arr[1],
                     p2value: "O",
                     p2move: "",
-                    p2id: "",
                 };
 
                 // Create a game object
