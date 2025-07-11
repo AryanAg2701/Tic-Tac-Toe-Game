@@ -1,6 +1,6 @@
 
 # socket.io
-Workinf requires node_ modules. to run the program first use "cd client" then "npm run devStart" in the Terminal.
+Working requires node_ modules. to run the program first use "cd client" then "npm run devStart" in the Terminal.
 
 It is a TIC TAC TOE game made using socket.io module server.
 Game has 2 modes :
