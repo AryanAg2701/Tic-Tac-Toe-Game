@@ -1,5 +1,5 @@
 
-# socket.io
+# Tic-Tac-Toe Game
 Working requires node_ modules. to run the program first use "cd client" then "npm run devStart" in the Terminal.
 
 It is a TIC TAC TOE game made using socket.io module server.
