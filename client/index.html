@@ -100,7 +100,7 @@
                     let value = document.getElementById("turn").innerText.startsWith("X") ? "X" : "O";  // Determine the current player
                     e.innerText = value;  // add the square with the players value
                     e.disabled = true;  // Disable the square
-                    socket.emit("playing", { value: value, id: e.id });  // Emit the playing event to the server
+                    socket.emit("playing", { value: value, id: e.id, name: name });  // Emit the playing event to the server
                 });
             });
 
